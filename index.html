@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #e8f4fc;
+      }
+
+      #navbar {
+        background-color: #5e9fd8;
+        text-align: center;
+        padding: 1rem;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      #details {
+        margin: 2rem auto;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      #details input {
+        width: 80%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      #details button {
+        padding: 0.5rem 1rem;
+        background-color: #5e9fd8;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #details button:hover {
+        background-color: #4a89c7;
+      }
+
+      #errorfield {
+        color: red;
+        margin-top: 1rem;
+      }
+
+      #data {
+        margin: 2rem auto;
+        width: 90%;
+        max-width: 600px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+
+      #today {
+        background-color: #d9ecf7;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      #future {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .day-card {
+        flex: 1;
+        background-color: #f7f9fc;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .day-card p {
+        margin: 0.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar">Weather Dashboard</div>
+    <div id="details">
+      <h4>Enter a City Name</h4>
+      <input
+        id="search"
+        type="text"
+        placeholder="E.g., New York, London, Tokyo"
+      />
+      <button id="searchbutton">Search</button>
+      <p id="errorfield"></p>
+    </div>
+    <div id="data">
+      <div id="today">
+        <h3 id="location">City Name</h3>
+        <p id="temperature">Temperature: --</p>
+        <p id="max-temp">Max Temp: --</p>
+        <p id="min-temp">Min Temp: --</p>
+        <p id="wind">Wind: --</p>
+        <p id="humidity">Humidity: --</p>
+        <p id="condition">Condition: --</p>
+      </div>
+      <div id="future">
+        <div class="day-card">
+          <h4>Day 1</h4>
+          <p id="date1">Date: --</p>
+          <p id="max-temp1">Max Temp: --</p>
+          <p id="min-temp1">Min Temp: --</p>
+          <p id="wind1">Wind: --</p>
+          <p id="humidity1">Humidity: --</p>
+        </div>
+        <div class="day-card">
+          <h4>Day 2</h4>
+          <p id="date2">Date: --</p>
+          <p id="max-temp2">Max Temp: --</p>
+          <p id="min-temp2">Min Temp: --</p>
+          <p id="wind2">Wind: --</p>
+          <p id="humidity2">Humidity: --</p>
+        </div>
+        <div class="day-card">
+          <h4>Day 3</h4>
+          <p id="date3">Date: --</p>
+          <p id="max-temp3">Max Temp: --</p>
+          <p id="min-temp3">Min Temp: --</p>
+          <p id="wind3">Wind: --</p>
+          <p id="humidity3">Humidity: --</p>
+        </div>
+        <div class="day-card">
+          <h4>Day 4</h4>
+          <p id="date4">Date: --</p>
+          <p id="max-temp4">Max Temp: --</p>
+          <p id="min-temp4">Min Temp: --</p>
+          <p id="wind4">Wind: --</p>
+          <p id="humidity4">Humidity: --</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const apiKey = "6711aaf52e4ce128c2719018e75e9062";
+      const apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
+
+      const searchField = document.querySelector("#search");
+      const searchButton = document.querySelector("#searchbutton");
+      const errorField = document.querySelector("#errorfield");
+
+      const locationField = document.querySelector("#location");
+      const tempField = document.querySelector("#temperature");
+      const maxTempField = document.querySelector("#max-temp");
+      const minTempField = document.querySelector("#min-temp");
+      const windField = document.querySelector("#wind");
+      const humidityField = document.querySelector("#humidity");
+      const conditionField = document.querySelector("#condition");
+      const dataSec = document.querySelector('#data');
+
+      const dayCards = [
+        {
+          date: "#date1",
+          maxTemp: "#max-temp1",
+          minTemp: "#min-temp1",
+          wind: "#wind1",
+          humidity: "#humidity1",
+        },
+        {
+          date: "#date2",
+          maxTemp: "#max-temp2",
+          minTemp: "#min-temp2",
+          wind: "#wind2",
+          humidity: "#humidity2",
+        },
+        {
+          date: "#date3",
+          maxTemp: "#max-temp3",
+          minTemp: "#min-temp3",
+          wind: "#wind3",
+          humidity: "#humidity3",
+        },
+        {
+          date: "#date4",
+          maxTemp: "#max-temp4",
+          minTemp: "#min-temp4",
+          wind: "#wind4",
+          humidity: "#humidity4",
+        },
+      ];
+
+      searchButton.addEventListener("click", () => {
+        if (searchField.value === "") {
+          errorField.textContent = "Search field can't be empty";
+        } else {
+          errorField.textContent = "";
+          fetchWeather(searchField.value);
+          
+          dataSec.style.display = 'block';
+        }
+      });
+
+      function fetchWeather(location) {
+        const url = `${apiUrl}?q=${location}&appid=${apiKey}&units=metric`;
+
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.cod !== "200") {
+              errorField.textContent = data.message;
+              dataSec.style.display = 'none';
+              return;
+            }
+            console.log(data);
+
+            const today = data.list[0];
+            locationField.textContent = `${data.city.name} (${today.dt_txt.split(" ")[0]})`;
+            tempField.textContent = `Temperature: ${today.main.temp}°C`;
+            maxTempField.textContent = `Max Temp: ${today.main.temp_max}°C`;
+            minTempField.textContent = `Min Temp: ${today.main.temp_min}°C`;
+            windField.textContent = `Wind: ${today.wind.speed} m/s`;
+            humidityField.textContent = `Humidity: ${today.main.humidity}%`;
+            conditionField.textContent = `Condition: ${today.weather[0].description}`;
+
+            for (let i = 0; i < 4; i++) {
+              const forecast = data.list[i * 8 + 7]; // Approx. every 24 hours
+              document.querySelector(dayCards[i].date).textContent = `Date: ${forecast.dt_txt.split(" ")[0]}`;
+              document.querySelector(dayCards[i].maxTemp).textContent = `Max Temp: ${forecast.main.temp_max}°C`;
+              document.querySelector(dayCards[i].minTemp).textContent = `Min Temp: ${forecast.main.temp_min}°C`;
+              document.querySelector(dayCards[i].wind).textContent = `Wind: ${forecast.wind.speed} m/s`;
+              document.querySelector(dayCards[i].humidity).textContent = `Humidity: ${forecast.main.humidity}%`;
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+            errorField.textContent = "Failed to fetch weather data.";
+          });
+      }
+    </script>
+  </body>
+</html>
